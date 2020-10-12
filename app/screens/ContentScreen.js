@@ -6,16 +6,16 @@ const ContentScreen = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.bg}>
-        <Text>{props.route.params.items.taskName}</Text>
+        <Text>{props.route.params.items.description}</Text>
         <View style={styles.box}>
           <Text style={styles.text}>
-            {props.route.params.items.taskDescription}
+            {props.route.params.items.description}
           </Text>
         </View>
         <View style={styles.imgbox}>
           <Image
             source={{
-              uri: props.route.params.items.taskUrl,
+              uri: props.route.params.items.imageURL,
             }}
             style={styles.logo}
           />

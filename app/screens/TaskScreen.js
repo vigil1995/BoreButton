@@ -16,6 +16,26 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 import { withNavigation } from 'react-navigation';
 import * as RootNavigation from '../navigation/NavigationService';
 import  data from '../mock/tasks';
+//import db from "../config/firebase";
+import * as firebase from 'firebase';
+
+
+//firebase
+//initialize firebase
+const firebaseconfig = {
+  apiKey: "AIzaSyANr5d1ywhx6QIJc8o7rucLmeDiShPRIYc",
+    authDomain: "borebutton.firebaseapp.com",
+    databaseURL: "https://borebutton.firebaseio.com",
+    projectId: "borebutton",
+    storageBucket: "borebutton.appspot.com",
+
+}
+firebase.initializeApp(firebaseconfig);
+var db = firebase.firestore();
+var storage=firebase.storage();
+
+//firebase
+
  class TaskScreen extends React.Component {
   static navigationOptions = {
     title: 'Task',
@@ -26,9 +46,38 @@ import  data from '../mock/tasks';
     this.state = {
       
       activeIndex: 0,
-     carouselItems:data
+     carouselItems: []
+
     };
   }
+//new
+  componentDidMount(){
+    console.log('mounted')
+    console.log(db)
+    firebase.firestore().collection('Tasks').get()
+    .then( snapshot => {
+      const tasks = []
+      snapshot.forEach( doc => {
+        const data = doc.data()
+        //console.log(data.imageURL)
+        const gsReference = storage.refFromURL(data.imageURL)
+        //console.log(gsReference)
+        gsReference.getDownloadURL().then(function(url){
+        //console.log(url)
+        data.imageURL=url
+        //console.log(data.imageURL)
+    })
+
+        tasks.push(data)
+      })
+      this.setState({carouselItems:tasks})
+      console.log(this.state.carouselItems)
+      //console.log(typeof(this.state.carouselItems))
+    })
+    .catch( error => console.log(error))
+
+  }
+  //new
 
   _renderItem({ item }) {
     return (
@@ -36,17 +85,20 @@ import  data from '../mock/tasks';
       onPress={() => RootNavigation.navigate('Content', { items: item })}
       >
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.heading}>{item.taskName}</Text>
+          <Text style={styles.heading}>{item.description}</Text>
         </View>
-        <Image
+         <Image
           source={{
-            uri:item.taskUrl
+            uri:item.imageURL
           }}
           style={styles.logo}
-        />
+        /> 
+
+
       </TouchableWithoutFeedback>
     );
   }
+  
 
   render() {
 

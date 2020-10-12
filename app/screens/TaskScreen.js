@@ -54,7 +54,7 @@ var storage=firebase.storage();
   componentDidMount(){
     console.log('mounted')
     console.log(db)
-    firebase.firestore().collection('Tasks').get()
+    firebase.firestore().collection('News').get()
     .then( snapshot => {
       const tasks = []
       snapshot.forEach( doc => {
